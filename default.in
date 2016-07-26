@@ -12,7 +12,7 @@
 
 
 &OUTPUT
- ZSTART=0.0,	ZSTOP=.04
+ ZSTART=0.0,	ZSTOP=.048
  Zemit=500,       Zphase=250
  RefS=T
  EmitS=T,     PhaseS=T

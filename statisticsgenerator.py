@@ -87,6 +87,7 @@ for fname in glob.glob(path):
     
 stats=sorted(stats, key=lambda stat: stat[0])
 stats=np.array(stats)
+'''
 plt.figure(1)
 plt.xlabel("t (ns)")
 plt.ylabel("nemirrms (pi*mm*mrad)")
@@ -96,6 +97,7 @@ plt.xlabel("t (ns)")
 plt.ylabel("nemizrms (eV*s)")
 plt.plot(stats[:,0],stats[:,14])
 plt.show()
+'''
 if os.path.isdir("statistics")==False:
     os.makedirs("statistics")
 else:

@@ -22,7 +22,7 @@ with open("default.in") as defaults:
         inputarguments.append(line.split())
 #this is where you add options
 parser = argparse.ArgumentParser(description='Set the Parameters')
-parser.add_argument('--describe', type=str, help='description of the simulation',default="")
+parser.add_argument('--describe', type=str, help='description of the simulation',default="001")
 parser.add_argument('--aprad', type=float, help='The aperture Radius (mm)')
 parser.add_argument('--lpd', type=float, help='Laser Pulse Duration (seconds)', default=laserPulseDuration)
 parser.add_argument('--lss', type=float, help='Laser Spot Size (meters)', default=laserSpotSize)
@@ -40,7 +40,7 @@ laserPulseDuration=args.lpd
 laserSpotSize=args.lss
 NumberofElectrons=args.N
 #writes the new input file (Not distribution, instructions)
-fname="aprad{}lpd{}lss{}N{}".format(aprad,laserPulseDuration,laserSpotSize,NumberofElectrons)+args.describe
+fname=args.describe
 #Changes name of distribution file in input file
 inputarguments[6][2]="'"+fname+".ini',"
 

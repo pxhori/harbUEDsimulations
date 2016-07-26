@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jun 21 15:37:05 2016
-
-@author: wildcat
-"""
-
 import glob
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,7 +7,6 @@ import argparse
 parser = argparse.ArgumentParser(description='Set the Parameters')
 parser.add_argument('--delfiles', type=int, help="Choose whether to keep or delete phase space files, default to delete", default=1)
 args=parser.parse_args()
-
 path="*.001"
 me=9.1*10**-31
 c=2.998*10**8

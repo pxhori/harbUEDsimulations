@@ -41,10 +41,10 @@ def statisticsgenerator(data,me,c):
         pzdata=data[:,5]*5.34428595*10**-28
         tdata=data[:,6]
         p2=pxdata*pxdata+pydata*pydata+pzdata*pzdata
-        v2=p2/(me*me+p2*p2/(c*c))
-        vxdata=pxdata*(1.-v2/(c*c))/me
-        vydata=pydata*(1.-v2/(c*c))/me
-        vzdata=pzdata*(1.-v2/(c*c))/me
+        v2=p2/(me*me+p2/(c*c))
+        vxdata=pxdata*np.sqrt((1.-v2/(c*c)))/me
+        vydata=pydata*np.sqrt((1.-v2/(c*c)))/me
+        vzdata=pzdata*np.sqrt((1.-v2/(c*c)))/me
         Gdata=1./(np.sqrt(1.-v2/(c*c)))
         avgx=xdata.mean()
         avgy=ydata.mean()
@@ -66,7 +66,9 @@ def statisticsgenerator(data,me,c):
         ypc=Bydata-avgBy
         nemixrms=avgG*np.sqrt(((xc*xc).mean())*((xpc*xpc).mean())-((xc*xpc).mean())**2)
         nemiyrms=avgG*np.sqrt(((yc*yc).mean())*((ypc*ypc).mean())-((yc*ypc).mean())**2)
-        nemirrms=avgG*np.sqrt(nemixrms*nemiyrms-abs((xc*yc).mean()*(xpc*ypc).mean()-(xc*ypc).mean()*(xpc*yc).mean()))
+        emixrms=avgG*np.sqrt(((xc*xc).mean())*((xpc*xpc).mean())-((xc*xpc).mean())**2)
+        emiyrms=avgG*np.sqrt(((yc*yc).mean())*((ypc*ypc).mean())-((yc*ypc).mean())**2)
+        nemirrms=avgG*np.sqrt(emixrms*emiyrms-abs((xc*yc).mean()*(xpc*ypc).mean()-(xc*ypc).mean()*(xpc*yc).mean()))
         tc=tdata-tdata.mean()
         Gc=Gdata-avgG
         nemizrms=me*c*c/(1.6*10**-19)*np.sqrt((tc*tc).mean()*(Gc*Gc).mean()-(tc*Gc).mean()**2)

@@ -59,6 +59,9 @@ def statisticsgenerator(data,me,c):
         avgBz=vzdata.mean()/c
         Bxdata=vxdata/c
         Bydata=vydata/c
+        Bzdata=vzdata/c
+        stdBz=Bzdata.std()
+        stdBx=Bxdata.std()
         avgG=Gdata.mean()
         xc=xdata-avgx
         xpc=Bxdata-avgBx
@@ -66,20 +69,20 @@ def statisticsgenerator(data,me,c):
         ypc=Bydata-avgBy
         nemixrms=avgG*np.sqrt(((xc*xc).mean())*((xpc*xpc).mean())-((xc*xpc).mean())**2)
         nemiyrms=avgG*np.sqrt(((yc*yc).mean())*((ypc*ypc).mean())-((yc*ypc).mean())**2)
-        emixrms=avgG*np.sqrt(((xc*xc).mean())*((xpc*xpc).mean())-((xc*xpc).mean())**2)
-        emiyrms=avgG*np.sqrt(((yc*yc).mean())*((ypc*ypc).mean())-((yc*ypc).mean())**2)
+        emixrms=np.sqrt(((xc*xc).mean())*((xpc*xpc).mean())-((xc*xpc).mean())**2)
+        emiyrms=np.sqrt(((yc*yc).mean())*((ypc*ypc).mean())-((yc*ypc).mean())**2)
         nemirrms=avgG*np.sqrt(emixrms*emiyrms-abs((xc*yc).mean()*(xpc*ypc).mean()-(xc*ypc).mean()*(xpc*yc).mean()))
-        tc=tdata-tdata.mean()
+        tc=-(zdata-avgz)/(c*Bzdata)
         Gc=Gdata-avgG
-        nemizrms=me*c*c/(1.6*10**-19)*np.sqrt((tc*tc).mean()*(Gc*Gc).mean()-(tc*Gc).mean()**2)
-        return tdata.mean(), avgz, avgx, avgy, avgr, stdz, stdx, stdy, avgBx, avgBy, avgBz, avgG, len(xdata), nemirrms, nemizrms, data,
+        nemizrms=((me*c*c)/(1.6*10**-19))*np.sqrt((tc*tc).mean()*(Gc*Gc).mean()-((tc*Gc).mean())**2)
+        return tdata.mean(), avgz, avgx, avgy, avgr, stdz, stdx, stdy, avgBx, avgBy, avgBz, avgG, len(xdata), stdBz, stdBx, nemixrms, nemiyrms, nemirrms, nemizrms, data,
     
 stats=[]
 for fname in glob.glob(path):
     #extracts output data into np array
     if "emit" not in fname and "Log" not in fname and "ref" not in fname and "3d" not in fname:
-        t, avgz, avgx, avgy, avgr, stdz, stdx, stdy, avgBx, avgBy, avgBz, avgG, numpar, nemirrms, nemizrms, data=statisticsgenerator(parser(),me,c)
-        stats.append([t, avgz, avgx, avgy, avgr, stdz, stdx, stdy, avgBx, avgBy, avgBz, avgG, numpar, nemirrms, nemizrms])
+        t, avgz, avgx, avgy, avgr, stdz, stdx, stdy, avgBx, avgBy, avgBz, avgG, numpar, stdBz, stdBx, nemixrms, nemiyrms, nemirrms, nemizrms, data=statisticsgenerator(parser(),me,c)
+        stats.append([t, avgz, avgx, avgy, avgr, stdz, stdx, stdy, avgBx, avgBy, avgBz, avgG, numpar, stdBz, stdBx, nemixrms, nemiyrms, nemirrms, nemizrms])
         if args.delfiles==True:        
             os.remove(fname)
         else:
@@ -104,4 +107,4 @@ if os.path.isdir("statistics")==False:
     os.makedirs("statistics")
 else:
     pass
-np.savetxt("statistics/"+fname[:-9]+".csv", stats, header="t (ns), avgz (m), avgx (m), avgy (m), avgr (m), stdz (m), stdx (m), stdy (m), avgBx , avgBy, avgBz, avgG, numpar, nemirrms (pi m rad), nemizrms (eV s)", delimiter=",")
+np.savetxt("statistics/"+fname[:-9]+".csv", stats, header="t (ns), avgz (m), avgx (m), avgy (m), avgr (m), stdz (m), stdx (m), stdy (m), avgBx , avgBy, avgBz, avgG, numpar, stdBz, stdBx, nemixrms (pi m rad), nemiyrms (pi m rad), nemirrms (pi m rad), nemizrms (eV s)", delimiter=",")

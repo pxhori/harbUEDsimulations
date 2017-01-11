@@ -31,7 +31,7 @@ args=parser.parse_args()
 #allows default aprad to be left
 if args.aprad:
     aprad=args.aprad
-    inputarguments[37][4]="Ap_R(1)={},".format(aprad)
+    inputarguments[40][4]="Ap_R(1)={},".format(aprad)
 else:
     aprad=.5
 
@@ -39,12 +39,13 @@ else:
 laserPulseDuration=args.lpd
 laserSpotSize=args.lss
 NumberofElectrons=args.N
+SimulatedParticles=args.N
 #writes the new input file (Not distribution, instructions)
 fname=args.describe
 #Changes name of distribution file in input file
 inputarguments[6][2]="'"+fname+".ini',"
 nmin=int(args.N*.0025)
-inputarguments[26][0]="N_min={}".format(nmin)
+inputarguments[27][0]="N_min={}".format(nmin)
 f=open(fname+".in", "w")
 for line in inputarguments:
     f.write("".join(line))

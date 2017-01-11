@@ -7,7 +7,7 @@ dt=dt.strftime('d%Y.%m.%dt%H.%M.%S')
 laserPulseDuration=100.*10**-15
 laserSpotSize=.01*10**-3
 NumberofElectrons=10000
-aprad=.5
+aprad=.05
 
 parser = argparse.ArgumentParser(description='Set the Parameters')
 parser.add_argument('--describe', type=str, help='Description of the simulation, if not specified date and time is used', default='1')
@@ -25,4 +25,4 @@ args.N=int(args.N)
 os.system("python AstraInputGenerator.py --aprad={0:.10f} --lpd={1:.20f} --lss={2:.20f} --N={3} ".format(args.aprad, args.lpd, args.lss, args.N)+"--describe="+args.describe)
 fname=args.describe
 os.system("./Astra "+fname+".in")
-os.system("python statisticsgenerator.py --delfiles={}".format(args.delfiles))
+os.system("python statisticsgenerator.py --delfiles={}".format(args.delfiles)+" --runnumber="+args.describe)

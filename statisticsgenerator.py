@@ -6,6 +6,7 @@ import argparse
 #This allows you to specify whether to keep or delete the files at the end (default is to delete
 parser = argparse.ArgumentParser(description='Set the Parameters')
 parser.add_argument('--delfiles', type=int, help="Choose whether to keep or delete phase space files, default to delete", default=1)
+parser.add_argument('--runnumber', type=str, help="The number of run", default=1)
 args=parser.parse_args()
 path="*.001"
 me=9.1*10**-31
@@ -80,7 +81,7 @@ def statisticsgenerator(data,me,c):
 stats=[]
 for fname in glob.glob(path):
     #extracts output data into np array
-    if "emit" not in fname and "Log" not in fname and "ref" not in fname and "3d" not in fname:
+    if "emit" not in fname and "Log" not in fname and "ref" not in fname and "3d" not in fname and args.runnumber in fname:
         t, avgz, avgx, avgy, avgr, stdz, stdx, stdy, avgBx, avgBy, avgBz, avgG, numpar, stdBz, stdBx, nemixrms, nemiyrms, nemirrms, nemizrms, data=statisticsgenerator(parser(),me,c)
         stats.append([t, avgz, avgx, avgy, avgr, stdz, stdx, stdy, avgBx, avgBy, avgBz, avgG, numpar, stdBz, stdBx, nemixrms, nemiyrms, nemirrms, nemizrms])
         if args.delfiles==True:        
@@ -107,4 +108,4 @@ if os.path.isdir("statistics")==False:
     os.makedirs("statistics")
 else:
     pass
-np.savetxt("statistics/"+fname[:-9]+".csv", stats, header="t (ns), avgz (m), avgx (m), avgy (m), avgr (m), stdz (m), stdx (m), stdy (m), avgBx , avgBy, avgBz, avgG, numpar, stdBz, stdBx, nemixrms (pi m rad), nemiyrms (pi m rad), nemirrms (pi m rad), nemizrms (eV s)", delimiter=",")
+np.savetxt("statistics/"+args.runnumber+".csv", stats, header="t (ns), avgz (m), avgx (m), avgy (m), avgr (m), stdz (m), stdx (m), stdy (m), avgBx , avgBy, avgBz, avgG, numpar, stdBz, stdBx, nemixrms (pi m rad), nemiyrms (pi m rad), nemirrms (pi m rad), nemizrms (eV s)", delimiter=",")

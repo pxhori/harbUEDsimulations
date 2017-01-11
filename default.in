@@ -7,13 +7,13 @@
  Distribution = 'input.ini',	Xoff=0.0,	Yoff=0.0,
  TRACK_ALL=T,     Auto_phase=T
  
- H_max=0.001,     H_min=0
+ H_max=0.0001,     H_min=0
 /
 
 
 &OUTPUT
  ZSTART=0.0,	ZSTOP=.048
- Zemit=500,       Zphase=250
+ Zemit=500,       Zphase=50
  RefS=T
  EmitS=T,     PhaseS=T
 /
@@ -21,20 +21,23 @@
 
 &CHARGE
  LSPCH=T
+ LSPCH3D=F
  Nrad=10, Cell_var=3.0,	Nlong_in=10
  min_grid=0.0
  Max_Scale=0.05
  N_min=20
+ Exp_control=.1
 /
 
 
 &CAVITY
  LEField=T,
- File_Efield(1)='dcfieldourcavity.dat',
- MaxE(1)=-10,	
+ C_noscale(1)=T,
+ File_Efield(1)='DC-3D',
+ Com_grid(1)='E',
 /
  
 &APERTURE
- LApert=T, File_Aperture(1) = 'Rad', Ap_R(1)=.5, Ap_Z1(1)=.01, Ap_Z2(1)=.0105,
+ LApert=T, File_Aperture(1) = 'Rad', Ap_R(1)=.05, Ap_Z1(1)=.01, Ap_Z2(1)=.0105,
 / 
 

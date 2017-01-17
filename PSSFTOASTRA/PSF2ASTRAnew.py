@@ -9,13 +9,14 @@ import numpy as np
 from scipy.interpolate import griddata as grid
 import csv
 import matplotlib.pyplot as plt
-#define interested r and z region in meters, should be only user edited
-#portion of script
+#define interested r and z region in meters
 r=.00200000
 dr=.0001000300000
 z=.01100000
 dz=.00011111
 Nr=list(np.arange(0,r+dr/2,dr))
+#Define the parameters for the rectangular grid here, or leave to match with 
+#what is given from poisson but as a rectangle
 Nx=Ny=list(np.arange(-r,r+dr/2,dr))
 Nz=list(np.arange(0,z+dr,dz))
 #makes rectangular grid

@@ -99,7 +99,7 @@ for zsection in Ezdata:
 Ezdataastraformat=np.array(Ezdataastraformat)
 #this is just to fiugre out the plots
 
-plt.quiver(griddata[:,0], griddata[:,1], Exdataastraformat[30,:,:], Eydataastraformat[30,:,:],scale=1)
+plt.quiver(griddata[:,0], griddata[:,1], Exdataastraformat[50,:,:], Eydataastraformat[50,:,:],scale=1)
 
 
 #write out the data

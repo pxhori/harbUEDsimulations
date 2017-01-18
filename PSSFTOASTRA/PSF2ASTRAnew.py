@@ -9,11 +9,12 @@ import numpy as np
 from scipy.interpolate import griddata as grid
 import csv
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 #define interested r and z region in meters
 r=.00200000
-dr=.0001000300000
+dr=.00001000300000
 z=.01100000
-dz=.00011111
+dz=.00005527
 Nr=list(np.arange(0,r+dr/2,dr))
 #Define the parameters for the rectangular grid here, or leave to match with 
 #what is given from poisson but as a rectangle
@@ -100,9 +101,17 @@ for zsection in Ezdata:
 Ezdataastraformat=np.array(Ezdataastraformat)
 #this is just to fiugre out the plots
 
-plt.quiver(griddata[:,0], griddata[:,1], Exdataastraformat[50,:,:], Eydataastraformat[50,:,:],scale=1)
-
-
+#plt.quiver(griddata[:,0], griddata[:,1], Exdataastraformat[80,:,:], Eydataastraformat[80,:,:],scale=1)
+depth=88
+Evalues=[]
+plottingdata=np.array([[Exdataastraformat[depth,i,:],Eydataastraformat[depth,i,:]] for i in np.arange(0,len(Exdataastraformat[depth,:,:]),1)])
+#3d plot attempt
+for xline in plottingdata:
+    for i in np.arange(0,len(Exdataastraformat[depth,:,:]),1):
+        Evalues.append(np.sqrt(xline[0][i]**2+xline[1][i]**2))
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(griddata[:,0],griddata[:,1],Evalues)
 #write out the data
 with open("DC-3D.ex","w") as outfile:
     writer=csv.writer(outfile,delimiter=' ')

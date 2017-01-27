@@ -8,8 +8,7 @@ Created on Wed Jan  4 09:20:00 2017
 import numpy as np
 from scipy.interpolate import griddata as grid
 import csv
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+import gc
 rmax=.002
 #imports and sorts according to R data from poisson's SF7 file
 poissondata=np.genfromtxt("OUTSF7.TXT", skip_header=34)
@@ -29,9 +28,22 @@ Nr=[r for r in Nr if r <= rmax]
 Nx=Ny=sorted([-x for x in Nr]+Nr[1:])
 Nz=sorted(list(set(poissondata[:,1])))
 
-X, Y, Z = np.meshgrid(Nx,Ny,Nz)
 #Creates file header for astra
 fileheader=[[len(list(Nx))]+Nx,[len(Ny)]+Ny,[len(Nz)]+Nz]
+#print the file header for astra format
+with open("DC-3D.ex","w") as outfile:
+    writer=csv.writer(outfile,delimiter=' ')
+    for i in np.arange(0,len(fileheader),1):
+        writer.writerow(fileheader[i])
+with open("DC-3D.ey","w") as outfile:
+    writer=csv.writer(outfile,delimiter=' ')
+    for i in np.arange(0,len(fileheader),1):
+        writer.writerow(fileheader[i])
+with open("DC-3D.ez","w") as outfile:
+    writer=csv.writer(outfile,delimiter=' ')
+    for i in np.arange(0,len(fileheader),1):
+        writer.writerow(fileheader[i])
+del fileheader
 #create table of x y r theta and i, which is the order preserver
 griddata=[]
 i=0
@@ -54,69 +66,45 @@ start=0
 for selector in location:
     poissonzsection.append(poissondata[start:selector])
     start=selector
+del poissondata
+gc.collect()
 Rmesh= np.meshgrid(griddata[:,2])
 i=0
-Edata=[]
 for pzsection in poissonzsection:
     Er=grid(pzsection[:,:1],pzsection[:,2],(Rmesh), method="linear", fill_value=0.)
     Ez=grid(pzsection[:,:1],pzsection[:,3],(Rmesh), method="linear", fill_value=0.)    
     i=0
+    Edatazsection=[]
     for dline in griddata:       
         #appending (Ex,Ey,Ez,x,y,i) (i is the order preserver)
-        Edata.append([Er[0,i]*np.cos(dline[3]),Er[0,i]*np.sin(dline[3]),Ez[0,i],dline[0],dline[1],dline[-1]])
+        Edatazsection.append([Er[0,i]*np.cos(dline[3]),Er[0,i]*np.sin(dline[3]),Ez[0,i],dline[0],dline[1],dline[-1]])
         i+=1
-
-#breaks up Edata into a list of points by component ordered in Z 
-#to print it out
-Gridspacing=len(Nx)*len(Ny)
-EdataChunks=np.array([Edata[i:i+Gridspacing] for i in range(0,len(Edata),Gridspacing)])
-#put it in the easiest format to write it out in astra format
-Exdata=[]
-Eydata=[]
-Ezdata=[]
-for Edatazsection in EdataChunks:
+    Edatazsection=np.array(Edatazsection)
     #sorting by i to preserve the order of cycling through y values for each x
     Edatazsection=Edatazsection[Edatazsection[:,-1].argsort()]
-    Exdata.append(list(Edatazsection[:,0]))
-    Eydata.append(list(Edatazsection[:,1]))
-    Ezdata.append(list(Edatazsection[:,2]))
-Exdataastraformat=[]
-Eydataastraformat=[]
-Ezdataastraformat=[]
-for zsection in Exdata:
+    Exdata=(list(Edatazsection[:,0]))
+    Eydata=(list(Edatazsection[:,1]))
+    Ezdata=(list(Edatazsection[:,2]))
     linespacing=len(Nx)
-    zsectionchunk=[zsection[i:i+linespacing] for i in range(0,len(zsection),linespacing)]
-    Exdataastraformat.append(zsectionchunk)
-Exdataastraformat=np.array(Exdataastraformat)
-for zsection in Eydata:
+    #put it in the astra data format
+    Exdataastraformat=[Exdata[i:i+linespacing] for i in range(0,len(Exdata),linespacing)]
+    Exdataastraformat=np.array(Exdataastraformat)
+    #write it out in astra data format
+    with open("DC-3D.ex","a") as outfile:
+        writer=csv.writer(outfile,delimiter=' ')
+        for line in Exdataastraformat:
+            writer.writerow(line)
     linespacing=len(Ny)
-    zsectionchunk=[zsection[i:i+linespacing] for i in range(0,len(zsection),linespacing)]
-    Eydataastraformat.append(zsectionchunk)
-Eydataastraformat=np.array(Eydataastraformat)
-for zsection in Ezdata:
+    Eydataastraformat=[Eydata[i:i+linespacing] for i in range(0,len(Eydata),linespacing)]
+    Eydataastraformat=np.array(Eydataastraformat)
+    with open("DC-3D.ey","a") as outfile:
+        writer=csv.writer(outfile,delimiter=' ')
+        for line in Eydataastraformat:
+            writer.writerow(line)
     linespacing=len(Nx)
-    zsectionchunk=[zsection[i:i+linespacing] for i in range(0,len(zsection),linespacing)]
-    Ezdataastraformat.append(zsectionchunk)
-Ezdataastraformat=np.array(Ezdataastraformat)
-#write out the data
-with open("DC-3D.ex","w") as outfile:
-    writer=csv.writer(outfile,delimiter=' ')
-    for i in np.arange(0,len(fileheader),1):
-        writer.writerow(fileheader[i])
-    for array in Exdataastraformat:
-        for line in array:
-            writer.writerow(line)
-with open("DC-3D.ey","w") as outfile:
-    writer=csv.writer(outfile,delimiter=' ')
-    for i in np.arange(0,len(fileheader),1):
-        writer.writerow(fileheader[i])
-    for array in Eydataastraformat:
-        for line in array:
-            writer.writerow(line)
-with open("DC-3D.ez","w") as outfile:
-    writer=csv.writer(outfile,delimiter=' ')
-    for i in np.arange(0,len(fileheader),1):
-        writer.writerow(fileheader[i])
-    for array in Ezdataastraformat:
-        for line in array:
+    Ezdataastraformat=[Ezdata[i:i+linespacing] for i in range(0,len(Ezdata),linespacing)]
+    Ezdataastraformat=np.array(Ezdataastraformat)
+    with open("DC-3D.ez","a") as outfile:
+        writer=csv.writer(outfile,delimiter=' ')
+        for line in Ezdataastraformat:
             writer.writerow(line)

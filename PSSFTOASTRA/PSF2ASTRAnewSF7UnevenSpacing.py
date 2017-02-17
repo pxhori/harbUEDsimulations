@@ -9,6 +9,8 @@ import numpy as np
 from scipy.interpolate import griddata as grid
 import csv
 import gc
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 rmax=.002
 #imports and sorts according to R data from poisson's SF7 file
 poissondata=np.genfromtxt("OUTSF7.TXT", skip_header=34)
@@ -64,12 +66,12 @@ poissonzsection=[]
 #between different zs.
 start=0
 for selector in location:
-    poissonzsection.append(poissondata[start:selector])
-    start=selector
+    poissonzsection.append(poissondata[start:selector+1])
+    start=selector+1
 del poissondata
 gc.collect()
 Rmesh= np.meshgrid(griddata[:,2])
-i=0
+k=0
 for pzsection in poissonzsection:
     Er=grid(pzsection[:,:1],pzsection[:,2],(Rmesh), method="linear", fill_value=0.)
     Ez=grid(pzsection[:,:1],pzsection[:,3],(Rmesh), method="linear", fill_value=0.)    
@@ -108,3 +110,14 @@ for pzsection in poissonzsection:
         writer=csv.writer(outfile,delimiter=' ')
         for line in Ezdataastraformat:
             writer.writerow(line)
+#Everything after here graphs a Er for 
+#for a particular z.  Not needed in general
+
+    if k==160:
+        Erval=np.sqrt((Exdataastraformat**2+Eydataastraformat**2))
+        X,Y=np.meshgrid(Nx,Ny)
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        ax.plot_wireframe(X,Y,Erval,rstride=20,cstride=20)
+    k+=1
+        
